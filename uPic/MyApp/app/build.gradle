@@ -1,0 +1,166 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'walle'
+
+android {
+    compileSdkVersion 29
+
+
+    defaultConfig {
+        applicationId "com.veigar.practice"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+//    walle {
+//        // 指定渠道包的输出路径
+//        apkOutputFolder = new File("${project.buildDir}/outputs/channels");
+//        // 定制渠道包的APK的文件名称
+//        apkFileNameFormat = '123.apk';
+//        // 渠道配置文件
+//        channelFile = new File("${project.getProjectDir()}/channel")
+//    }
+}
+
+
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation project(path: ':mylibrary')
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+   // implementation 'com.veigar.demo:uploader:1.0.0'
+    implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
+    implementation 'com.tencent:mmkv-static:1.2.7'
+    implementation 'com.meituan.android.walle:library:1.1.7'
+    api 'com.otaliastudios:cameraview:2.7.0'
+    implementation 'com.hjq:toast:8.8'
+//    debugImplementation 'com.facebook.flipper:flipper:0.90.2'
+//
+//    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.6.0'
+    debugImplementation "com.facebook.flipper:flipper:0.90.2"
+    releaseImplementation "com.facebook.flipper:flipper-noop:0.90.2"
+    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
+    debugImplementation 'com.facebook.flipper:flipper-fresco-plugin:0.90.2'
+    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.90.2'
+
+
+    implementation 'com.blankj:utilcodex:1.30.6'
+
+
+    implementation 'com.qcloud.cos:cos-ktx:5.6.5'
+    implementation 'com.qcloud.cos:cos-android:5.6.14'
+
+}
+
+println "<========app========>"
+println(getParent())
+println "<========app========>"
+
+// 1、声明一个名为 JsonChao 的 gradle task
+task JsonChao
+JsonChao {
+    setGroup("MyTask")
+    // 2、在 JsonChao task 闭包内输出 hello~，
+    // 执行在 gradle 生命周期的第二个阶段，即配置阶段。
+    println("hello~")
+    // 3、给 task 附带一些 执行动作（Action），执行在
+    // gradle 生命周期的第三个阶段，即执行阶段。
+    doFirst {
+        println("start")
+    }
+    doLast {
+        println("end")
+    }
+}
+// 4、除了上述这种将声明与配置、Action 分别定义
+// 的方式之外，也可以直接将它们结合起来。
+// 这里我们又定义了一个 Android task，它依赖于 JsonChao
+// task，也就是说，必须先执行完 JsonChao task，才能
+// 去执行 Android task，由此，它们之间便组成了一个
+// 有向无环图：JsonChao task => Android task
+task Andorid(dependsOn:"JsonChao") {
+    doLast {
+        println("end?")
+    }
+}
+
+
+// Task 定义方式1：直接通过 task 函数去创建（在 "()" 可以不指定 group 与 description 属性）
+task myTask1(group: "MyTask", description: "task1") {
+    println "This is myTask1"
+}
+
+// Task 定义方式2：通过 TaskContainer 去创建 task
+this.tasks.create(name: "myTask2") {
+    setGroup("MyTask")
+    setDescription("task2")
+    println "This is myTask2"
+}
+
+//task Gradle_First() {
+//    setGroup("MyTask")
+//}
+//
+//task Gradle_Last() {
+//    setGroup("MyTask")
+//    doLast {
+//        println "I am not $Gradle_First.name"
+//    }
+//}
+
+task Gradle_First() {
+    ext.good = true
+
+}
+
+task Gradle_Last() {
+    doFirst {
+        println Gradle_First.good
+    }
+    doLast {
+        println "I am not $Gradle_First.name"
+    }
+}
+
+task showDescription1  {
+    description = 'this is task showDescription'
+    println description
+}
